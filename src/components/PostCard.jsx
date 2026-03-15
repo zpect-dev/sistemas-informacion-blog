@@ -19,7 +19,7 @@ function PostCard({ post, featured = false }) {
       >
         {/* Content - Horizontal Layout but WITHOUT image */}
         <div className="flex flex-col justify-center gap-2 p-5 w-full border-l-4 border-violet-600">
-          <div className="flex items-center justify-between items-start">
+          <div className="flex items-center justify-between">
             <span className="w-fit rounded-full bg-violet-600/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-violet-400 border border-violet-600/30">
               {post.category}
             </span>

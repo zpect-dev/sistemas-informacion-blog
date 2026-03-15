@@ -4,6 +4,20 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    // Classes used in posts.js HTML string content (not scanned by Tailwind purge)
+    { pattern: /^bg-(slate|violet)/ },
+    { pattern: /^text-(slate|violet|white)/ },
+    { pattern: /^border-(slate|violet)/ },
+    { pattern: /^divide-(slate|violet)/ },
+    { pattern: /^(p|px|py|my|mx|mt|mb|gap|space-y)-/ },
+    { pattern: /^(rounded|overflow|w-full|flex|items|justify|font|tracking|uppercase|italic|table)/ },
+    'text-xs', 'text-sm', 'text-lg',
+    'font-mono', 'font-medium', 'font-semibold',
+    'text-center', 'text-left',
+    'overflow-x-auto', 'w-full',
+    'divide-y',
+  ],
   theme: {
     extend: {
       fontFamily: {

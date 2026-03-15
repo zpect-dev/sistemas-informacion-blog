@@ -32,13 +32,9 @@ function Home() {
           <p className="text-slate-600 text-sm">Agrega tu primera entrada en <code className="text-violet-400">src/data/posts.js</code></p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Featured card — spans full width */}
-          {featured && <PostCard post={featured} featured />}
-
-          {/* Rest of the posts */}
-          {rest.map((post) => (
-            <PostCard key={post.id} post={post} />
+        <div className="flex flex-col gap-6">
+          {sorted.map((post) => (
+            <PostCard key={post.id} post={post} featured />
           ))}
         </div>
       )}
