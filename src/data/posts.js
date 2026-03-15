@@ -88,7 +88,7 @@ const posts = [
     slug: 'fases-modelizacion-control-vehiculos',
     title: 'Fases de Definición, Modelización y Control del Proyecto "Control-Vehículos"',
     date: '2026-03-15',
-    category: 'Técnica de levantamiento de información',
+    category: 'Investigación, Modelado y Documentación',
     excerpt:
       'Investigación de hechos, DER dinámico, DFD, diagrama de red y estrategia de desarrollo RAD para el sistema de flota.',
     coverImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80',
