@@ -230,9 +230,9 @@ const posts = [
             classDef ext fill:#1e293b,stroke:#6366f1,color:#fff,stroke-width:2px
             classDef proc fill:#2e1065,stroke:#a855f7,color:#fff,stroke-width:2px,border-radius:50%
 
-            Cond(["👤 Conductor"]):::ext
-            Admin(["👤 Administrador"]):::ext
-            SCV(["⚙️ Sistema\nControl-Vehículos"]):::proc
+            Cond(["Conductor"]):::ext
+            Admin(["Administrador"]):::ext
+            SCV(["Sistema\nControl-Vehículos"]):::proc
 
             Cond -->|"Reportes diarios\nRevisiones semanales\nObservaciones"| SCV
             SCV -->|"Confirmación\nAlertas de revisión"| Cond
@@ -283,26 +283,26 @@ const posts = [
             classDef db fill:#0f172a,stroke:#64748b,color:#cbd5e1
             classDef cloud fill:#0c1a10,stroke:#22c55e,color:#86efac
 
-            subgraph Campo["📍 Nodo Campo (Conductor)"]
+            subgraph Campo["Nodo Campo (Conductor)"]
               direction LR
-              Mov["📱 App Móvil\n(Conductor)"]:::node
+              Mov["App Móvil\n(Conductor)"]:::node
             end
 
-            subgraph Oficina["🏢 Nodo Oficina (Administrador)"]
+            subgraph Oficina["Oficina (Administrador)"]
               direction LR
-              Web["💻 Panel Web\n(Administrador)"]:::node
+              Web["Panel Web\n(Administrador)"]:::node
             end
 
-            subgraph Servidor["☁️ Servidor de Aplicación (Laravel)"]
+            subgraph Servidor["Servidor de Aplicación (Laravel)"]
               direction TB
-              API["🔌 API RESTful\n(Laravel Routes)"]:::server
-              Auth["🔐 Auth\n(Sanctum)"]:::server
-              BL["⚙️ Business Logic\n(Controllers + Services)"]:::server
+              API["API RESTful\n(Laravel Routes)"]:::server
+              Auth["Auth\n(Sanctum)"]:::server
+              BL["Business Logic\n(Controllers + Services)"]:::server
             end
 
-            subgraph Datos["🗄️ Capa de Datos"]
+            subgraph Datos["Capa de Datos"]
               DB[("MySQL\nBase de Datos")]:::db
-              Storage["💾 Storage\n(Imágenes / Videos)"]:::db
+              Storage["Storage\n(Imágenes / Videos)"]:::db
             end
 
             Mov -- "HTTPS / JSON" --> API

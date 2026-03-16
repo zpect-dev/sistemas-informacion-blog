@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import posts from '../data/posts';
+import DiagramModal from '../components/DiagramModal';
 
 function formatDate(dateStr) {
   const date = new Date(dateStr + 'T00:00:00');
@@ -12,16 +13,63 @@ function formatDate(dateStr) {
 }
 
 function PostDetail() {
-  const { slug } = useParams();
-  const navigate = useNavigate();
-  const post = posts.find((p) => p.slug === slug);
+  const { slug }    = useParams();
+  const navigate    = useNavigate();
+  const post        = posts.find((p) => p.slug === slug);
+
+  const [modalSvg, setModalSvg] = useState(null);
+  const closeModal = useCallback(() => setModalSvg(null), []);
+
+  // ─── Use a ref for the article so React NEVER touches its innerHTML
+  //     after initial mount. This prevents mermaid SVGs from being wiped
+  //     when modalSvg state changes cause a re-render.
+  const articleRef = useRef(null);
+  const initialized = useRef(false);
 
   useEffect(() => {
-    if (post && window.mermaid) {
-      window.mermaid.run();
-    }
+    if (!post || !articleRef.current) return;
+    if (initialized.current) return; // already set up — don't re-run
+    initialized.current = true;
+
+    // 1. Inject HTML content
+    articleRef.current.innerHTML = post.content;
+
+    // 2. Render Mermaid diagrams
+    const runMermaid = () => {
+      if (window.mermaid) {
+        window.mermaid.run({ nodes: articleRef.current.querySelectorAll('.mermaid') });
+      }
+    };
+    runMermaid();
+
+    // 3. After Mermaid finishes (give it ~1s), attach zoom-click handlers
+    setTimeout(() => {
+      articleRef.current?.querySelectorAll('.mermaid').forEach((el) => {
+        if (el.dataset.zoomReady) return;
+        el.dataset.zoomReady = 'true';
+        el.style.cursor = 'zoom-in';
+        el.title = 'Haz clic para ampliar';
+
+        el.addEventListener('click', () => {
+          const svg = el.querySelector('svg');
+          if (!svg) return;
+          const clone = svg.cloneNode(true);
+          // Strip fixed dimensions — viewBox will handle sizing in the modal
+          clone.removeAttribute('width');
+          clone.removeAttribute('height');
+          clone.style.cssText = 'width:100%;height:100%;display:block;';
+          setModalSvg(clone.outerHTML);
+        });
+      });
+    }, 1200);
   }, [post]);
 
+  // Reset init flag when slug changes so a new post re-initialises
+  useEffect(() => {
+    initialized.current = false;
+  }, [slug]);
+
+  // ─── 404 state ────────────────────────────────────────────────────────────
   if (!post) {
     return (
       <main className="flex flex-col items-center justify-center gap-6 py-32 text-center px-6 animate-fade-in">
@@ -38,11 +86,11 @@ function PostDetail() {
     );
   }
 
+  // ─── Post ─────────────────────────────────────────────────────────────────
   return (
     <main className="animate-fade-in py-12">
-      {/* Content container */}
       <div className="mx-auto max-w-3xl px-6 pb-20">
-        {/* Meta Header */}
+        {/* Meta header */}
         <div className="mb-8 animate-slide-up">
           <div className="flex items-center gap-3 mb-4">
             <span className="inline-block rounded-full bg-violet-600/20 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-violet-400 border border-violet-600/30">
@@ -50,7 +98,6 @@ function PostDetail() {
             </span>
             <time className="text-sm text-slate-500">{formatDate(post.date)}</time>
           </div>
-          
           <h1 className="mb-6 text-3xl font-extrabold leading-tight text-white sm:text-4xl lg:text-5xl">
             {post.title}
           </h1>
@@ -59,11 +106,8 @@ function PostDetail() {
         {/* Divider */}
         <div className="mb-10 h-px w-full bg-gradient-to-r from-violet-600/40 via-slate-700/40 to-transparent" />
 
-        {/* Body */}
-        <article
-          className="prose-blog"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        {/* Body — ref-controlled, React never touches innerHTML here */}
+        <article ref={articleRef} className="prose-blog" />
 
         {/* Back button */}
         <div className="mt-14 border-t border-slate-800/50 pt-8">
@@ -87,6 +131,9 @@ function PostDetail() {
           </button>
         </div>
       </div>
+
+      {/* Diagram zoom modal — rendered outside content div so it's a true overlay */}
+      <DiagramModal content={modalSvg} onClose={closeModal} />
     </main>
   );
 }
